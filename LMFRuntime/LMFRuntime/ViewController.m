@@ -22,6 +22,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    unsigned int numIvars;
+//    Ivar *ivars = class_copyIvarList([UIView class], &numIvars);
+//    for (int index=0; index<numIvars; index++) {
+//        Ivar var = ivars[index];
+//        NSLog(@"var:%s",ivar_getName(var));
+//    }
+    
+    objc_property_t *ivars = class_copyPropertyList([UIView class], &numIvars);
+    for (int i=0; i<numIvars; i++) {
+        objc_property_t property = ivars[i];
+        const char *name = property_getName(property);
+        NSLog(@"property:%s",name);
+    }
+
+//    Method *methods = class_copyMethodList([UIView class], &numIvars);
+//    for (int i=0; i<numIvars; i++) {
+//        Method meth = methods[i];
+//        SEL sel = method_getName(meth);
+//        const char *name = sel_getName(sel);
+//        NSLog(@"method:%s",name);
+//    }
+}
+
+-(void)test1{
     Method method1 = class_getClassMethod([Person class], @selector(run));
     Method method2 = class_getClassMethod([Person class], @selector(eat));
     Method method3 = class_getClassMethod([Dog class], @selector(sleep));
@@ -29,7 +53,6 @@
     //改方法只是交换了方法里面的内容，调用的还是原来的方法
     method_exchangeImplementations(method2, method1);  //执行后1指向2的代码块；2指向1的代码块
     method_exchangeImplementations(method2, method3);  //执行后2指向3的代码块；3指向2指向的代码块（即原来1的代码块）
-    
 }
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
